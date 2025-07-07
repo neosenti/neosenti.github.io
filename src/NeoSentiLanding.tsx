@@ -7,7 +7,6 @@ import { AnimatedSection } from "@/components/ui/animated-section";
 import { FloatingElements } from "@/components/ui/floating-elements";
 import { SectionBackground } from "@/components/ui/section-background";
 import {
-  Radar,
   Target,
   Heart,
   Award,
@@ -279,9 +278,7 @@ export default function NeoSentiLanding() {
               <img
                 src="/logo_long_inverted.svg"
                 alt="NeoSenti Logo"
-                width={200}
-                height={60}
-                className="h-12 w-auto"
+                className="h-16 w-auto"
               />
             </div>
 

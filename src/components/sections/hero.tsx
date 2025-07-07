@@ -12,7 +12,7 @@ interface HeroProps {
   isVisible: boolean;
 }
 
-export function Hero({ translations, isVisible }: HeroProps) {
+export function Hero({ translations }: HeroProps) {
   return (
     <section
       id="hero"

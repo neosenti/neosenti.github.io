@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Radar, Languages, Menu, X } from "lucide-react";
+import { Languages, Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import type { Language, TranslationKey } from "@/lib/translations";
 
@@ -11,11 +11,7 @@ interface HeaderProps {
   onLanguageToggle: () => void;
 }
 
-export function Header({
-  language,
-  translations,
-  onLanguageToggle,
-}: HeaderProps) {
+export function Header({ translations, onLanguageToggle }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -59,7 +55,7 @@ export function Header({
             <div className="absolute -top-1 -right-1 w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
           </div> */}
           <div>
-            <img src="/logo_long.svg" alt="BIA Radar" className="h-12 w-auto" />
+            <img src="/logo_long.svg" alt="BIA Radar" className="h-11 w-auto" />
             {/* <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               NeoSenti
             </span> */}
