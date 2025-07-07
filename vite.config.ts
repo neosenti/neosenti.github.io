@@ -11,4 +11,16 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // This creates a separate chunk for the three.js library
+        manualChunks(id) {
+          if (id.includes("three")) {
+            return "vendor-three";
+          }
+        },
+      },
+    },
+  },
 });

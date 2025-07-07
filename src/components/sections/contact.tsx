@@ -1,8 +1,8 @@
 "use client";
 
 import type React from "react";
-
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,12 +21,45 @@ export function Contact({ translations }: ContactProps) {
   >("idle");
   const [message, setMessage] = useState("");
 
+  const contactInfo = [
+    {
+      icon: Mail,
+      label: "Email",
+      value: translations.contact.info.email,
+      href: `mailto:${translations.contact.info.email}`,
+      color: "blue",
+    },
+    {
+      icon: MapPin,
+      label: "Localização",
+      value: translations.contact.info.location,
+      color: "purple",
+    },
+  ];
+
+  // Mapping object for Tailwind JIT-safe classes
+  const colorClasses = {
+    blue: {
+      bg: "bg-blue-500/20",
+      border: "border-blue-400/30",
+      text: "text-blue-400",
+    },
+    purple: {
+      bg: "bg-purple-500/20",
+      border: "border-purple-400/30",
+      text: "text-purple-400",
+    },
+    green: {
+      bg: "bg-green-500/20",
+      border: "border-green-400/30",
+      text: "text-green-400",
+    },
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     e.stopPropagation();
-
     const form = e.currentTarget;
-
     if (!form.checkValidity()) {
       const firstInvalid = form.querySelector(":invalid") as HTMLElement;
       firstInvalid?.focus();
@@ -53,7 +86,6 @@ export function Contact({ translations }: ContactProps) {
         },
         body: json,
       });
-
       const responseData = await response.json();
 
       if (response.status === 200) {
@@ -61,7 +93,6 @@ export function Contact({ translations }: ContactProps) {
         setMessage(responseData.message || translations.contact.success);
         form.reset();
       } else {
-        console.log(response);
         setSubmitStatus("error");
         setMessage(responseData.message || translations.contact.error);
       }
@@ -71,7 +102,6 @@ export function Contact({ translations }: ContactProps) {
       setMessage("Something went wrong!");
     } finally {
       setIsSubmitting(false);
-      // Hide message after 5 seconds
       setTimeout(() => {
         setSubmitStatus("idle");
         setMessage("");
@@ -167,22 +197,21 @@ export function Contact({ translations }: ContactProps) {
                   {/* Result Message */}
                   {message && (
                     <div
-                      className={`rounded-lg p-4 ${
-                        submitStatus === "success"
-                          ? "bg-green-500/20 border border-green-400/30"
-                          : submitStatus === "error"
-                          ? "bg-red-500/20 border border-red-400/30"
-                          : "bg-blue-500/20 border border-blue-400/30"
-                      }`}
+                      className={cn("rounded-lg p-4", {
+                        "bg-green-500/20 border border-green-400/30":
+                          submitStatus === "success",
+                        "bg-red-500/20 border border-red-400/30":
+                          submitStatus === "error",
+                        "bg-blue-500/20 border border-blue-400/30":
+                          submitStatus === "idle",
+                      })}
                     >
                       <p
-                        className={`text-sm ${
-                          submitStatus === "success"
-                            ? "text-green-300"
-                            : submitStatus === "error"
-                            ? "text-red-300"
-                            : "text-blue-300"
-                        }`}
+                        className={cn("text-sm", {
+                          "text-green-300": submitStatus === "success",
+                          "text-red-300": submitStatus === "error",
+                          "text-blue-300": submitStatus === "idle",
+                        })}
                       >
                         {message}
                       </p>
@@ -192,7 +221,7 @@ export function Contact({ translations }: ContactProps) {
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 shadow-lg"
+                    className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 shadow-lg text-white"
                   >
                     {isSubmitting ? (
                       <>
@@ -214,28 +243,7 @@ export function Contact({ translations }: ContactProps) {
           {/* Contact Info */}
           <div className="lg:col-span-2 space-y-8">
             <div className="space-y-6">
-              {[
-                {
-                  icon: Mail,
-                  label: "Email",
-                  value: translations.contact.info.email,
-                  color: "blue",
-                  href: `mailto:${translations.contact.info.email}`,
-                },
-                // {
-                //   icon: Phone,
-                //   label: "Telefone",
-                //   value: translations.contact.info.phone,
-                //   color: "green",
-                //   href: `tel:${translations.contact.info.phone}`,
-                // },
-                {
-                  icon: MapPin,
-                  label: "Localização",
-                  value: translations.contact.info.location,
-                  color: "purple",
-                },
-              ].map((item, index) => (
+              {contactInfo.map((item, index) => (
                 <Card
                   key={index}
                   className="bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-all duration-300"
@@ -243,10 +251,21 @@ export function Contact({ translations }: ContactProps) {
                   <CardContent className="p-6">
                     <div className="flex items-start space-x-4">
                       <div
-                        className={`w-12 h-12 bg-${item.color}-500/20 rounded-xl flex items-center justify-center border border-${item.color}-400/30`}
+                        className={cn(
+                          "w-12 h-12 rounded-xl flex items-center justify-center",
+                          colorClasses[item.color as keyof typeof colorClasses]
+                            ?.bg,
+                          colorClasses[item.color as keyof typeof colorClasses]
+                            ?.border
+                        )}
                       >
                         <item.icon
-                          className={`w-6 h-6 text-${item.color}-400`}
+                          className={cn(
+                            "w-6 h-6",
+                            colorClasses[
+                              item.color as keyof typeof colorClasses
+                            ]?.text
+                          )}
                         />
                       </div>
                       <div>
