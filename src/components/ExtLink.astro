@@ -1,0 +1,9 @@
+---
+// Link que avisa ao leitor de tela quando leva para outro site. Abre na mesma aba, de propósito.
+import type { Link } from '../i18n/types';
+interface Props { link: Link; hint: string; class?: string }
+const { link, hint, class: cls } = Astro.props;
+---
+<a href={link.href} class={cls}>
+  {link.label}{link.external && (<><span class="visually-hidden"> {hint}</span><span aria-hidden="true"> ↗</span></>)}
+</a>

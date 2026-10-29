@@ -1,0 +1,32 @@
+---
+// Página 404 do GitHub Pages: não sabemos o idioma, então mostramos os dois.
+import '../styles/global.css';
+import Logo from '../components/Logo.astro';
+import { content } from '../i18n';
+const { pt, en } = content;
+---
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pt.notFound.title} · Neosenti</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <header class="site-header"><div class="wrap header-row"><a class="brand" href="/" aria-label={pt.ui.homeLabel}><Logo /></a></div></header>
+    <main class="wrap prose" style="padding-top:72px">
+      <section aria-labelledby="h-404-pt">
+        <h1 id="h-404-pt">{pt.notFound.title}</h1>
+        <p class="lead mute">{pt.notFound.text}</p>
+        <p><a class="btn btn--primary" href="/">{pt.notFound.home}</a></p>
+      </section>
+      <section lang="en" aria-labelledby="h-404-en">
+        <h2 id="h-404-en">{en.notFound.title}</h2>
+        <p class="lead mute">{en.notFound.text}</p>
+        <p><a class="btn btn--ghost" href="/en/">{en.notFound.home}</a></p>
+      </section>
+    </main>
+  </body>
+</html>

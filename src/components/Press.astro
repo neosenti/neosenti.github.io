@@ -1,0 +1,53 @@
+---
+import { content } from '../i18n';
+import type { Lang } from '../i18n/types';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = content[lang];
+const p = c.press;
+// Arquivos na mesma ordem dos rótulos em press.downloads
+const files = [
+  { href: '/press/neosenti-logo.svg', size: 'SVG, 5 KB' },
+  { href: '/press/rafael-farias-meneses.jpg', size: 'JPG, 105 KB' },
+  { href: '/press/bia-radar-desenho.png', size: 'PNG, 185 KB' },
+];
+const subject = encodeURIComponent(lang === 'pt' ? 'Imprensa' : 'Press');
+---
+<div class="wrap">
+  <div class="page-head">
+    <h1>{p.h1}</h1>
+    <p class="lead mute">{p.lead}</p>
+  </div>
+  <div class="press-grid">
+    <div class="prose">
+      <section aria-labelledby="h-facts">
+        <h2 id="h-facts">{p.factsTitle}</h2>
+        <dl class="factlist">
+          {p.facts.map((f) => (<div><dt>{f.term}</dt><dd>{f.desc}</dd></div>))}
+        </dl>
+      </section>
+      <section aria-labelledby="h-boiler">
+        <h2 id="h-boiler">{p.boilerplateTitle}</h2>
+        <p class="boiler">{p.boilerplate}</p>
+      </section>
+    </div>
+    <div class="prose press-side">
+      <section aria-labelledby="h-downloads">
+        <h2 id="h-downloads">{p.downloadsTitle}</h2>
+        <ul class="downloads" role="list">
+          {p.downloads.map((d, i) => (
+            <li>
+              <a href={files[i].href} download>{d.label}</a>
+              <span class="mute">{d.desc} ({files[i].size})</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section aria-labelledby="h-press-contact">
+        <h2 id="h-press-contact">{p.contactTitle}</h2>
+        <p>{p.contactText}</p>
+        <p><a href={`mailto:${c.contact.email}?subject=${subject}`}>{c.contact.email}</a></p>
+      </section>
+    </div>
+  </div>
+</div>
