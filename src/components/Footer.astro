@@ -1,0 +1,27 @@
+---
+import Logo from './Logo.astro';
+import ExtLink from './ExtLink.astro';
+import { content, routes } from '../i18n';
+import type { Lang } from '../i18n/types';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = content[lang];
+---
+<footer class="site-footer">
+  <div class="wrap footer-row">
+    <div>
+      <a class="brand" href={routes.home[lang]} aria-label={c.ui.homeLabel}><Logo /></a>
+      <p style="margin-top:12px">{c.footer.tagline}</p>
+    </div>
+    <nav aria-label={c.ui.footerNav}>
+      <ul class="footer-links">
+        {c.footer.links.map((l) => (
+          <li><ExtLink link={l} hint={c.ui.externalHint} /></li>
+        ))}
+        <li><a href={`mailto:${c.contact.email}`}>{c.contact.email}</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div class="wrap" style="margin-top:24px"><p>{c.footer.legal}</p></div>
+</footer>

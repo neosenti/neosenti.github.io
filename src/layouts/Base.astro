@@ -1,0 +1,89 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import LangPrompt from '../components/LangPrompt.astro';
+import { content, htmlLang, routes, other, type PageKey } from '../i18n';
+import type { Lang } from '../i18n/types';
+
+interface Props {
+  lang: Lang;
+  page: PageKey;
+  title: string;
+  description: string;
+}
+
+const { lang, page, title, description } = Astro.props;
+const c = content[lang];
+const site = Astro.site!;
+const here = routes[page][lang];
+const alt = routes[page][other(lang)];
+const canonical = new URL(here, site).href;
+// Âncoras da home mudam de nome entre idiomas; o script traduz o #hash ao trocar de idioma.
+const hashMap: Record<string, string> = {};
+for (const k of Object.keys(c.sectionIds) as (keyof typeof c.sectionIds)[]) hashMap[c.sectionIds[k]] = content[other(lang)].sectionIds[k];
+---
+<!doctype html>
+<html lang={htmlLang[lang]}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="pt-BR" href={new URL(routes[page].pt, site).href} />
+    <link rel="alternate" hreflang="en" href={new URL(routes[page].en, site).href} />
+    <link rel="alternate" hreflang="x-default" href={new URL(routes[page].pt, site).href} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#FBF9F4" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0A1118" media="(prefers-color-scheme: dark)" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Neosenti" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL('/og.png', site).href} />
+    <meta property="og:locale" content={lang === 'pt' ? 'pt_BR' : 'en_US'} />
+    <meta property="og:locale:alternate" content={lang === 'pt' ? 'en_US' : 'pt_BR'} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preload" href="/fonts/sora-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/dm-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <script is:inline define:vars={{ page: lang, alt, hashMap }}>
+      // Escolha de idioma. Ordem: escolha manual salva > idioma do navegador > janela de escolha.
+      // Só redireciona quando há certeza; nunca para robôs de busca; nunca em loop.
+      document.documentElement.classList.add('js');
+      (function () {
+        var KEY = 'ns-lang';
+        var stored = null;
+        try { stored = localStorage.getItem(KEY); } catch (e) {}
+        if (/bot|crawl|spider|slurp|lighthouse|preview/i.test(navigator.userAgent)) return;
+        var go = function () {
+          // Proteção contra laço: não redireciona de novo uma página à qual acabamos de chegar por redirecionamento.
+          try {
+            var g = JSON.parse(sessionStorage.getItem('ns-redir') || 'null');
+            if (g && g.to === location.pathname && Date.now() - g.t < 3000) return;
+            sessionStorage.setItem('ns-redir', JSON.stringify({ to: new URL(alt, location.href).pathname, t: Date.now() }));
+          } catch (e) {}
+          var h = location.hash.slice(1);
+          var hash = h ? '#' + (hashMap[decodeURIComponent(h)] || h) : '';
+          location.replace(alt + location.search + hash);
+        };
+        if (stored === 'pt' || stored === 'en') { if (stored !== page) go(); return; }
+        var list = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || '']);
+        var first = String(list[0] || '').toLowerCase();
+        var guess = first.indexOf('pt') === 0 ? 'pt' : first.indexOf('en') === 0 ? 'en' : null;
+        if (guess) { if (guess !== page) go(); return; }
+        window.__nsAskLang = true;
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#conteudo">{c.ui.skipToContent}</a>
+    <LangPrompt lang={lang} />
+    <Header lang={lang} page={page} />
+    <main id="conteudo" tabindex="-1">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+  </body>
+</html>

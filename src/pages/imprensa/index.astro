@@ -1,0 +1,9 @@
+---
+import Base from '../../layouts/Base.astro';
+import Press from '../../components/Press.astro';
+import { content } from '../../i18n';
+const c = content.pt;
+---
+<Base lang="pt" page="press" title={c.press.metaTitle} description={c.press.metaDescription}>
+  <Press lang="pt" />
+</Base>

@@ -1,0 +1,59 @@
+---
+// Janela de escolha de idioma, mostrada só quando o navegador não está em português nem em inglês.
+// Não é modal e não rouba o foco. Cada trecho é marcado com o seu idioma, para o leitor de tela usar a voz certa.
+import { content, htmlLang } from '../i18n';
+import type { Lang } from '../i18n/types';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const first: Lang = lang;
+const second: Lang = lang === 'pt' ? 'en' : 'pt';
+const P = { pt: content.pt.langPrompt, en: content.en.langPrompt };
+const label = { pt: 'Português', en: 'English' };
+const href = { [lang]: '', [second]: '' };
+---
+<aside class="lang-prompt" aria-labelledby="lang-prompt-title" hidden>
+  <h2 id="lang-prompt-title">
+    <span lang={htmlLang[first]}>{P[first].title}</span> · <span lang={htmlLang[second]}>{P[second].title}</span>
+  </h2>
+  <p lang={htmlLang[first]}>{P[first].text}</p>
+  <p lang={htmlLang[second]}>{P[second].text}</p>
+  <div class="actions">
+    <a class="btn btn--primary" href="#" lang={htmlLang.pt} hreflang={htmlLang.pt} data-choose="pt">{label.pt}</a>
+    <a class="btn btn--ghost" href="#" lang={htmlLang.en} hreflang={htmlLang.en} data-choose="en">{label.en}</a>
+  </div>
+  <button class="lang-close" type="button">
+    <span class="visually-hidden"><span lang={htmlLang[first]}>{P[first].close}</span> / <span lang={htmlLang[second]}>{P[second].close}</span></span>
+    <span aria-hidden="true">×</span>
+  </button>
+</aside>
+
+<script>
+  const box = document.querySelector<HTMLElement>('.lang-prompt');
+  if (box && (window as any).__nsAskLang) {
+    const page = document.documentElement.lang.startsWith('pt') ? 'pt' : 'en';
+    const alt = document.querySelector<HTMLAnchorElement>('.lang-switch');
+    // Reserva espaço no fim da página para a janela não cobrir o que está com foco (WCAG 2.4.11).
+    const pad = () => {
+      const h = box.hidden ? '' : `${box.offsetHeight + 32}px`;
+      document.documentElement.style.scrollPaddingBottom = h;
+      document.body.style.paddingBottom = h;
+    };
+    box.querySelectorAll<HTMLAnchorElement>('[data-choose]').forEach((a) => {
+      // Leva para a mesma página no idioma escolhido.
+      a.href = a.dataset.choose === page ? location.pathname + location.hash : (alt?.href ?? '/');
+      a.addEventListener('click', () => { try { localStorage.setItem('ns-lang', a.dataset.choose || page); } catch (e) {} });
+    });
+    const close = () => {
+      try { localStorage.setItem('ns-lang', page); } catch (e) {}
+      const hadFocus = box.contains(document.activeElement);
+      box.hidden = true;
+      pad();
+      if (hadFocus) document.getElementById('conteudo')?.focus();
+    };
+    box.querySelector('.lang-close')?.addEventListener('click', close);
+    box.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+    box.hidden = false;
+    pad();
+    addEventListener('resize', pad);
+  }
+</script>

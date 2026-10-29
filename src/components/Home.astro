@@ -1,0 +1,138 @@
+---
+import TailGraphic from './TailGraphic.astro';
+import ExtLink from './ExtLink.astro';
+import { content } from '../i18n';
+import type { Lang } from '../i18n/types';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = content[lang];
+const id = c.sectionIds;
+---
+<!-- Abertura: a tese -->
+<section class="hero" aria-labelledby="h-hero">
+  <div class="wrap hero-grid">
+    <div class="hero-text">
+      <h1 id="h-hero">{c.hero.h1}</h1>
+      <p class="lead">{c.hero.lead}</p>
+      <div class="actions">
+        <a class="btn btn--light" href={c.hero.ctaPrimary.href}>{c.hero.ctaPrimary.label}</a>
+        <a class="btn btn--outline" href={c.hero.ctaSecondary.href}>{c.hero.ctaSecondary.label}</a>
+      </div>
+    </div>
+    <TailGraphic title={c.hero.graphicTitle} desc={c.hero.graphicDesc} head={c.hero.graphicHead} tail={c.hero.graphicTail} />
+  </div>
+</section>
+
+<!-- Impacto: por que importa e quem precisa -->
+<section id={id.impact} class="section" aria-labelledby="h-impact">
+  <div class="wrap">
+    <p class="kicker">{c.impact.kicker}</p>
+    <h2 id="h-impact">{c.impact.h2}</h2>
+    <ul class="stats" role="list">
+      {c.impact.stats.map((s) => (
+        <li><p class="stat-value">{s.value}</p><p class="stat-text">{s.text}</p></li>
+      ))}
+    </ul>
+    <p class="source">{c.impact.source}</p>
+    <div class="who">
+      <h3>{c.impact.whoTitle}</h3>
+      <ul class="who-list" role="list">
+        {c.impact.who.map((w) => <li>{w}</li>)}
+      </ul>
+      <p class="closing">{c.impact.closing}</p>
+    </div>
+  </div>
+</section>
+
+<!-- Como fazemos -->
+<section id={id.how} class="section section--alt" aria-labelledby="h-how">
+  <div class="wrap">
+    <p class="kicker">{c.how.kicker}</p>
+    <h2 id="h-how">{c.how.h2}</h2>
+    <ol class="how" role="list">
+      {c.how.items.map((it, i) => (
+        <li>
+          <span class="how-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          <h3>{it.title}</h3>
+          <p>{it.text}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<!-- No que acreditamos -->
+<section id={id.beliefs} class="section" aria-labelledby="h-beliefs">
+  <div class="wrap">
+    <p class="kicker">{c.beliefs.kicker}</p>
+    <h2 id="h-beliefs">{c.beliefs.h2}</h2>
+    <ul class="beliefs" role="list">
+      {c.beliefs.items.map((b) => (
+        <li><h3>{b.title}</h3><p>{b.text}</p></li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<!-- Produtos -->
+<section id={id.products} class="section section--band" aria-labelledby="h-products">
+  <div class="wrap">
+    <p class="kicker">{c.products.kicker}</p>
+    <h2 id="h-products">{c.products.h2}</h2>
+    <div class="products">
+      <article class="product" aria-labelledby="h-bia">
+        <img src="/img/bia-desenho.webp" width="640" height="629" alt={c.products.bia.imageAlt} loading="lazy" decoding="async" />
+        <div class="product-text">
+          <h3 id="h-bia">{c.products.bia.name}</h3>
+          <p>{c.products.bia.text}</p>
+          <ExtLink link={c.products.bia.link} hint={c.ui.externalHint} class="btn btn--light" />
+        </div>
+      </article>
+      <div class="next">
+        <h3>{c.products.nextTitle}</h3>
+        <p>{c.products.next}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Quem somos -->
+<section id={id.about} class="section" aria-labelledby="h-about">
+  <div class="wrap about">
+    <img class="portrait" src="/img/rafael.webp" width="480" height="480" alt={c.about.photoAlt} loading="lazy" decoding="async" />
+    <div class="about-text">
+      <p class="kicker">{c.about.kicker}</p>
+      <h2 id="h-about">{c.about.h2}</h2>
+      <p>{c.about.text}</p>
+      <figure class="quote">
+        <blockquote><p>{c.about.quote}</p></blockquote>
+        <figcaption>{c.about.quoteBy}</figcaption>
+      </figure>
+      <h3 class="milestones-title">{c.about.milestonesTitle}</h3>
+      <ul class="milestones" role="list">
+        {c.about.milestones.map((m) => (
+          <li><span class="year">{m.year}</span> <span>{m.text}</span></li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Contato -->
+<section id={id.contact} class="section section--alt" aria-labelledby="h-contact">
+  <div class="wrap contact">
+    <div>
+      <p class="kicker">{c.contact.kicker}</p>
+      <h2 id="h-contact">{c.contact.h2}</h2>
+      <p class="lead mute">{c.contact.lead}</p>
+      <p class="mail-wrap"><a class="big-mail" href={`mailto:${c.contact.email}`} aria-label={c.contact.emailLabel}>{c.contact.email}</a></p>
+      <p class="mute">{c.contact.location}</p>
+    </div>
+    <ul class="audiences" role="list">
+      {c.contact.audiences.map((a) => (
+        <li><strong>{a.who}</strong> <span class="mute">{a.why}</span></li>
+      ))}
+    </ul>
+  </div>
+</section>

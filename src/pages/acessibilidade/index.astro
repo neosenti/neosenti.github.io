@@ -1,0 +1,9 @@
+---
+import Base from '../../layouts/Base.astro';
+import Accessibility from '../../components/Accessibility.astro';
+import { content } from '../../i18n';
+const c = content.pt;
+---
+<Base lang="pt" page="accessibility" title={c.accessibility.metaTitle} description={c.accessibility.metaDescription}>
+  <Accessibility lang="pt" />
+</Base>

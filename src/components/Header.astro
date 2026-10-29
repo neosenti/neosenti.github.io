@@ -1,0 +1,66 @@
+---
+import Logo from './Logo.astro';
+import { content, htmlLang, routes, other, type PageKey } from '../i18n';
+import type { Lang } from '../i18n/types';
+
+interface Props { lang: Lang; page: PageKey }
+const { lang, page } = Astro.props;
+const c = content[lang];
+const to = other(lang);
+const home = routes.home[lang];
+const anchor = (id: string) => (page === 'home' ? `#${id}` : `${home}#${id}`);
+---
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href={home} aria-label={c.ui.homeLabel}><Logo /></a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-principal" hidden>
+      <span aria-hidden="true">☰</span> {c.ui.menu}
+    </button>
+    <nav class="nav" id="nav-principal" aria-label={c.ui.navLabel}>
+      <ul class="nav-list">
+        {c.nav.map((item) => (
+          <li><a href={anchor(c.sectionIds[item.section])}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+    <a
+      class="lang-switch"
+      href={routes[page][to]}
+      hreflang={htmlLang[to]}
+      lang={htmlLang[to]}
+      data-set-lang={to}
+    >
+      <span class="lang-code" aria-hidden="true">{to === 'en' ? 'EN' : 'PT'}</span>
+      <span>{c.ui.switchLang}</span>
+    </a>
+  </div>
+</header>
+
+<script>
+  // Menu em telas pequenas (padrão "disclosure"). Sem JavaScript, a navegação aparece aberta.
+  const btn = document.querySelector<HTMLButtonElement>('.menu-btn');
+  const nav = document.getElementById('nav-principal');
+  if (btn && nav) {
+    btn.hidden = false;
+    const set = (open: boolean) => {
+      btn.setAttribute('aria-expanded', String(open));
+      if (open) nav.setAttribute('data-open', ''); else nav.removeAttribute('data-open');
+    };
+    btn.addEventListener('click', () => set(btn.getAttribute('aria-expanded') !== 'true'));
+    nav.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a')) set(false); });
+    // Fecha o menu quando o foco sai do cabeçalho, para ele não cobrir o conteúdo focado.
+    btn.closest('.site-header')?.addEventListener('focusout', (e) => {
+      const header = e.currentTarget as HTMLElement;
+      if (btn.getAttribute('aria-expanded') === 'true' && !header.contains(e.relatedTarget as Node)) set(false);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && btn.getAttribute('aria-expanded') === 'true') { set(false); btn.focus(); }
+    });
+  }
+  // Escolha manual de idioma: fica salva e passa a valer nas próximas visitas.
+  document.querySelectorAll<HTMLAnchorElement>('[data-set-lang]').forEach((a) => {
+    a.addEventListener('click', () => {
+      try { localStorage.setItem('ns-lang', a.dataset.setLang || ''); } catch (e) {}
+    });
+  });
+</script>
