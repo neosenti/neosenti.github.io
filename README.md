@@ -25,6 +25,7 @@ O `pnpm deploy` usa o pacote [gh-pages](https://www.npmjs.com/package/gh-pages):
 | Cores, tipografia, layout | `src/styles/global.css` (tokens no topo; modo escuro segue o sistema) |
 | Escolha de idioma | script em `src/layouts/Base.astro` e `src/components/LangPrompt.astro` |
 | Imagens | `public/img/` (site) e `public/press/` (downloads da imprensa) |
+| Kit de mídia | `src/media.ts` (lista de arquivos), `public/midia/` (arquivos e miniaturas), `src/scripts/mediakit.ts` (termos, marcação e download, tudo no navegador) |
 
 ## Páginas
 | pt | en |
@@ -32,6 +33,7 @@ O `pnpm deploy` usa o pacote [gh-pages](https://www.npmjs.com/package/gh-pages):
 | `/` | `/en/` |
 | `/imprensa/` | `/en/press/` |
 | `/acessibilidade/` | `/en/accessibility/` |
+| `/midia/` | `/en/media/` |
 | `404.html` (bilíngue) | |
 
 ## Idioma

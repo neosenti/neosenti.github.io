@@ -113,5 +113,38 @@ export interface Content {
     reportCta: string;
   };
 
+  /** Kit de mídia: galeria com download condicionado ao aceite dos termos */
+  media: {
+    metaTitle: string;
+    metaDescription: string;
+    h1: string;
+    lead: string;
+    howTitle: string;
+    how: string[];
+    groups: { photos: { title: string; credit: string }; renders: { title: string; credit: string }; drawings: { title: string; credit: string } };
+    /** título e texto alternativo de cada arquivo, pela chave do manifesto */
+    items: Record<string, { title: string; alt: string }>;
+    download: string;
+    downloadAll: string;
+    downloadAllNote: string;
+    dialog: {
+      title: string;
+      intro: string;
+      termsTitle: string;
+      terms: { h: string; p: string }[];
+      version: string;
+      name: string;
+      email: string;
+      accept: string;
+      submit: string;
+      cancel: string;
+      preparing: string;
+      done: string;
+      error: string;
+      invalid: string;
+      readmeTitle: string;
+    };
+  };
+
   notFound: { title: string; text: string; home: string };
 }

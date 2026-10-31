@@ -1,5 +1,5 @@
 ---
-import { content } from '../i18n';
+import { content, routes } from '../i18n';
 import type { Lang } from '../i18n/types';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -42,6 +42,7 @@ const subject = encodeURIComponent(lang === 'pt' ? 'Imprensa' : 'Press');
             </li>
           ))}
         </ul>
+        <p><a href={routes.media[lang]}>{lang === 'pt' ? 'Mais fotos, imagens 3D e desenhos no kit de mídia' : 'More photos, 3D images and drawings in the media kit'}</a></p>
       </section>
       <section aria-labelledby="h-press-contact">
         <h2 id="h-press-contact">{p.contactTitle}</h2>

@@ -1,0 +1,9 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Media from '../../../components/Media.astro';
+import { content } from '../../../i18n';
+const c = content.en;
+---
+<Base lang="en" page="media" title={c.media.metaTitle} description={c.media.metaDescription}>
+  <Media lang="en" />
+</Base>

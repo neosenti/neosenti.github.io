@@ -1,0 +1,92 @@
+---
+// Kit de mídia: galeria + download condicionado ao aceite dos termos.
+// Os arquivos são marcados no navegador (src/scripts/mediakit.ts); nada é enviado a servidor.
+import { content, routes } from '../i18n';
+import type { Lang } from '../i18n/types';
+import { MEDIA, creditFor } from '../media';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const m = content[lang].media;
+const d = m.dialog;
+const groups = (['photos', 'renders', 'drawings'] as const).map((g) => ({ key: g, ...m.groups[g], items: MEDIA.filter((x) => x.group === g) }));
+const clientData = {
+  lang,
+  items: MEDIA.map((x) => ({ ...x, title: m.items[x.key].title, credit: creditFor(x.group, lang) })),
+  terms: { title: d.termsTitle, version: d.version, sections: d.terms },
+  termsUrl: new URL(routes.media[lang], 'https://neosenti.com').href,
+  readmeTitle: d.readmeTitle,
+  msg: { preparing: d.preparing, done: d.done, error: d.error, invalid: d.invalid },
+};
+---
+<div class="wrap">
+  <div class="page-head">
+    <h1>{m.h1}</h1>
+    <p class="lead mute">{m.lead}</p>
+  </div>
+
+  <section class="kit-how" aria-labelledby="h-how">
+    <h2 id="h-how">{m.howTitle}</h2>
+    <ol class="kit-steps">
+      {m.how.map((s) => <li>{s}</li>)}
+    </ol>
+    <div class="kit-all">
+      <button type="button" class="btn btn--primary" data-dl="all">{m.downloadAll}</button>
+      <p class="mute">{m.downloadAllNote}</p>
+    </div>
+    <p class="kit-status" role="status" aria-live="polite" data-status></p>
+  </section>
+
+  {groups.map((g) => (
+    <section class="kit-group" aria-labelledby={`h-${g.key}`}>
+      <h2 id={`h-${g.key}`}>{g.title}</h2>
+      <p class="mute">{g.credit}</p>
+      <ul class="kit-grid" role="list">
+        {g.items.map((it) => (
+          <li class="kit-item">
+            <div class={`kit-thumb kit-thumb--${it.group}`}>
+              <img src={`/midia/miniaturas/${it.base}.webp`} alt={m.items[it.key].alt} loading="lazy" decoding="async" />
+            </div>
+            <h3>{m.items[it.key].title}</h3>
+            <p class="mute kit-meta">{it.formats.map((f) => f.toUpperCase()).join(' + ')} · {it.w} × {it.h} px</p>
+            <div class="kit-actions">
+              {it.formats.map((f) => (
+                <button type="button" class="btn btn--ghost btn--sm" data-dl={it.key} data-format={f}>
+                  {m.download} <span class="visually-hidden">{m.items[it.key].title}</span> ({f.toUpperCase()})
+                </button>
+              ))}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
+</div>
+
+<dialog class="kit-dialog" aria-labelledby="kit-dialog-title" aria-describedby="kit-dialog-intro">
+  <form method="dialog" class="kit-form" novalidate>
+    <h2 id="kit-dialog-title">{d.title}</h2>
+    <p id="kit-dialog-intro" class="mute">{d.intro}</p>
+    <div class="kit-terms" role="region" tabindex="0" aria-labelledby="kit-terms-title">
+      <h3 id="kit-terms-title">{d.termsTitle}</h3>
+      {d.terms.map((t) => (<><h4>{t.h}</h4><p>{t.p}</p></>))}
+      <p class="mute">{d.version}</p>
+    </div>
+    <div class="kit-fields">
+      <label>{d.name}<input name="name" type="text" autocomplete="name" required minlength="3" /></label>
+      <label>{d.email}<input name="email" type="email" autocomplete="email" required /></label>
+      <label class="kit-check"><input name="accept" type="checkbox" required /> {d.accept}</label>
+    </div>
+    <p class="kit-error" role="alert" data-error></p>
+    <div class="actions">
+      <button type="submit" class="btn btn--primary" value="ok">{d.submit}</button>
+      <button type="button" class="btn btn--ghost" data-cancel>{d.cancel}</button>
+    </div>
+  </form>
+</dialog>
+
+<script type="application/json" id="kit-data" set:html={JSON.stringify(clientData)} />
+
+<script>
+  import { initMediaKit } from '../scripts/mediakit';
+  initMediaKit();
+</script>

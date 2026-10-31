@@ -10,7 +10,8 @@
     "deploy": "astro build && gh-pages -d dist --nojekyll --cname neosenti.com"
   },
   "dependencies": {
-    "astro": "5.18.2"
+    "astro": "5.18.2",
+    "jszip": "3.10.1"
   },
   "packageManager": "pnpm@9.15.9",
   "devDependencies": {
